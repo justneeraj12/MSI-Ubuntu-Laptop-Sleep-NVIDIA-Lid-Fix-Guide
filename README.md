@@ -1,9 +1,9 @@
-```markdown
 # MSI Ubuntu Laptop Sleep & NVIDIA Lid Fix Guide
 
 A comprehensive troubleshooting and permanent configuration guide for fixing sleep state issues, instant-wake bugs, and GNOME lid-switch inhibitors on MSI laptops running Ubuntu with NVIDIA hybrid graphics.
 
 ## 🔍 The Root Causes Found
+
 1. **The NVIDIA VRAM Handshake:** Installing proprietary NVIDIA drivers breaks default sleep states unless video memory preservation (`NVreg_PreserveVideoMemoryAllocations=1`) is explicitly forced.
 2. **PCIe Instant-Wake Bug:** The PCIe lanes for the NVIDIA GPU (`PEG0`, `PEG1`, `PEG2`) and the primary USB controller (`XHCI`) remain armed as system wake triggers, causing the laptop to instantly wake up milliseconds after entering sleep.
 3. **GNOME Inhibitor Lock:** GNOME's power daemon (`gsd-power`) falsely flags the NVIDIA driver's display handoff as an "External monitor attached," slamming a permanent block onto the `handle-lid-switch` event.
@@ -15,6 +15,7 @@ A comprehensive troubleshooting and permanent configuration guide for fixing sle
 Follow these steps to apply a clean, isolated, and permanent fix that survives reboots and kernel updates without interfering with development workspaces or hardware peripherals.
 
 ### Step 1: Enable NVIDIA Power Services & VRAM Preservation
+
 Ensure the NVIDIA driver properly coordinates with system suspend and saves its frame buffer:
 
 ```bash
@@ -127,7 +128,3 @@ systemd-inhibit --list --mode=block
 * **Expected Output:** `PEG0`, `PEG1`, `PEG2`, and `XHCI` will be absent from the enabled wakeup list, and `gsd-power` will no longer block the `handle-lid-switch`.
 
 Close your laptop lid on battery power or plugged into a charger—it will transition smoothly into deep sleep on the first try!
-
-```
-
-```
